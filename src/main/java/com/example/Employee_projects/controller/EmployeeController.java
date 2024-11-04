@@ -3,7 +3,9 @@ package com.example.Employee_projects.controller;
 import com.example.Employee_projects.ApiResponse.ApiResponse;
 import com.example.Employee_projects.Document.Employee;
 import com.example.Employee_projects.dto.EmployeeDto;
+import com.example.Employee_projects.dto.SignInRequest;
 import com.example.Employee_projects.services.EmployeeService;
+import com.nimbusds.jose.JOSEException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,14 @@ public class EmployeeController {
         logger.info("Create Employee Service Started");
         ApiResponse apiResponse = employeeService.createEmployee(employee);
         logger.info("Create Employee Service Completed");
+        return apiResponse;
+    }
+
+    @PostMapping("/sign-in-employee")
+    public ApiResponse signIn(@RequestBody SignInRequest request) throws JOSEException {
+        logger.info("Sign In Employee Service Started");
+        ApiResponse apiResponse = employeeService.signIn(request);
+        logger.info("Sign In Employee Service Completed");
         return apiResponse;
     }
 

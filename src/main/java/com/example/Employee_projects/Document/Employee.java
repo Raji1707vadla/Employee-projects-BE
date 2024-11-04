@@ -20,6 +20,7 @@ public class Employee {
     private List<String> projectIds;   // List of project IDs assigned to the employee
     private double salary;             // Employee's salary
     private String gender; // Employee's gender'
+    private String password;
 
 
 }
