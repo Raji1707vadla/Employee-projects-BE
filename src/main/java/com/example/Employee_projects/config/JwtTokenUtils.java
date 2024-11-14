@@ -42,9 +42,7 @@ public class JwtTokenUtils {
         JWEObject jweObject = new JWEObject(header, payload);
         jweObject.encrypt(encrypter);
 
-        String token = jweObject.serialize();
-
-        return token;
+        return jweObject.serialize();
     }
     public String parseToken(String token) throws BadJOSEException, ParseException, JOSEException {
         ConfigurableJWTProcessor<SimpleSecurityContext> jwtProcessor = new DefaultJWTProcessor<SimpleSecurityContext>();
@@ -54,9 +52,8 @@ public class JwtTokenUtils {
         jwtProcessor.setJWEKeySelector(jweKeySelector);
 
         JWTClaimsSet claims = jwtProcessor.process(token,null);
-        String mobile = (String) claims.getClaim("mobile");
 
-        return mobile;
+        return (String) claims.getClaim("mobile");
     }
 }
 

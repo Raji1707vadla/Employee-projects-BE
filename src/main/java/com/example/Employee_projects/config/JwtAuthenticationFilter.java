@@ -28,9 +28,9 @@ import java.util.Collections;
 
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
-    private JwtTokenUtils jwtTokenUtil;
+    private final JwtTokenUtils jwtTokenUtil;
 
-    private EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
 
