@@ -18,7 +18,9 @@ public class EmployeeDto {
     private String phone;              // Employee's phone number
     private String address;            // Home address of the employee
     private List<String> projectIds;   // List of project IDs assigned to the employee
-    private double salary;             // Employee's salary
+    private Double salary;             // Employee's salary
     private String gender; // Employee's gender'
     private String password;
+    private Boolean isActive;
+
 }

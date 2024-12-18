@@ -1,5 +1,6 @@
 package com.example.Employee_projects.services.impl;
 import com.example.Employee_projects.ApiResponse.ApiResponse;
+import com.example.Employee_projects.CommonUtil;
 import com.example.Employee_projects.Document.Employee;
 import com.example.Employee_projects.config.JwtTokenUtils;
 import com.example.Employee_projects.dto.EmployeeDto;
@@ -26,7 +27,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Override
     public ApiResponse getAllEmployees() {
-        List<EmployeeDto> employeeDtoList = employeeRepository.findAll().stream().map(this::entityToDto).toList();
+        List<EmployeeDto> employeeDtoList = employeeRepository.findAllByOrderByIsActiveDesc().stream().map(this::entityToDto).toList();
         return new ApiResponse(HttpStatus.OK, "Get all Employees ", employeeDtoList);
     }
 
@@ -38,6 +39,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public ApiResponse createEmployee(EmployeeDto request) {
+        CommonUtil.isValidObject(request);
         Employee employee = dtoToEmployee(request);
         employeeRepository.save(employee);
         return new ApiResponse(HttpStatus.OK, "Employee Created Successfully");
@@ -71,6 +73,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.delete(employee);
         return new ApiResponse(HttpStatus.OK, "Employee deleted successfully");
     }
+    @Override
+    public ApiResponse inActiveEmployee(String employeeId){
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new BadRequestException("Employee not found"));
+        if(employee.getIsActive()!=null) {
+            employee.setIsActive(!employee.getIsActive());
+        }else {
+            employee.setIsActive(false);
+        }
+        employeeRepository.save(employee);
+        return new ApiResponse(HttpStatus.OK, employee.getIsActive() ? "Employee activated Successfully":  "Employee Inactivated Successfully");
+    }
 
     public Employee dtoToEmployee(EmployeeDto request) {
         Employee employee;
@@ -86,7 +99,11 @@ public class EmployeeServiceImpl implements EmployeeService {
                     && !employee.getId().equals(request.getId())) {
                 throw new BadRequestException("Mobile number already exists");
             }
+            employee.setPassword( passwordEncoder.encode(employee.getPassword()));
         } else {
+            if(CommonUtil.isValid(request.getPassword())) {
+                throw new BadRequestException("Employee Password should not be null");
+            }
             // If the employee ID is null, create a new Employee instance
             employee = new Employee();
 
@@ -94,6 +111,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             if (employeeRepository.findByPhone(request.getPhone()) != null) {
                 throw new BadRequestException("Mobile number already exists");
             }
+            employee.setPassword( passwordEncoder.encode(request.getPassword()));
         }
 
         // Set employee properties from the DTO
@@ -105,7 +123,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setSalary(request.getSalary());
         employee.setDepartment(request.getDepartment());
         employee.setGender(request.getGender());
-        employee.setPassword( passwordEncoder.encode(request.getPassword()));
+        employee.setIsActive(true);
+
         return employee;
     }
 
@@ -121,6 +140,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeDto.setSalary(employee.getSalary());
         employeeDto.setDepartment(employee.getDepartment());
         employeeDto.setGender(employee.getGender());
+        if (employee.getIsActive()!=null) {
+            employeeDto.setIsActive(employee.getIsActive());
+        }else {
+            employeeDto.setIsActive(false);
+        }
         return employeeDto;
     }
 }

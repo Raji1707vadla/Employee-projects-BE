@@ -28,9 +28,7 @@ public class WebSecurityConfig {
 
 
     private final String[] PUBLIC_RESOURCE_AND_URL = {"/",
-            "/employees/create-employee",
-//            "/employees/get-all-employees",
-            "/employees/update-employee",
+
             "/employees/sign-in-employee",
                 "/", "/resources/**", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**"
     };

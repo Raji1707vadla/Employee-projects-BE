@@ -13,4 +13,6 @@ public interface ProjectService {
     ApiResponse updateProject(ProjectDto request);
 
     ApiResponse deleteProject(String id);
+
+    ApiResponse inActiveProject(String projectId);
 }

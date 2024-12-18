@@ -19,7 +19,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ApiResponse getAllProjects() {
-        List<ProjectDto> projects = projectRepository.findAll().stream().map(this::entityToProjectDto).toList();
+        List<ProjectDto> projects = projectRepository.findAllByOrderByIsActiveDesc().stream().map(this::entityToProjectDto).toList();
         return new ApiResponse(HttpStatus.OK,"Get all projects",projects);
     }
 
@@ -49,6 +49,17 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.delete(project);
         return new ApiResponse(HttpStatus.OK, "Project deleted successfully");
     }
+    @Override
+    public ApiResponse inActiveProject(String projectId){
+        Project project = projectRepository.findById(projectId).orElseThrow(()-> new BadRequestException("Project not found"));
+        if(project.getIsActive()!=null) {
+            project.setIsActive(!project.getIsActive());
+        }else {
+            project.setIsActive(false);
+        }
+        projectRepository.save(project);
+        return new ApiResponse(HttpStatus.OK, project.getIsActive()? "Project activated successfully":"Project inactivated successfully");
+    }
 
     public Project dtoToEntity(ProjectDto request) {
         Project project ;
@@ -58,15 +69,28 @@ public class ProjectServiceImpl implements ProjectService {
         }else {
             project = new Project();
         }
-        project.setDescription(request.getTitle());
+        project.setName(request.getName());
         project.setDescription(request.getDescription());
+        if(request.getStartDate()!=null){
+            project.setStartDate(request.getStartDate());
+        }
+        if(request.getEndDate()!=null){
+            project.setEndDate(request.getEndDate());
+        }
         return project;
     }
     public  ProjectDto entityToProjectDto(Project project) {
         ProjectDto projectDto = new ProjectDto();
         projectDto.setId(project.getId());
-        projectDto.setTitle(project.getTitle());
+        projectDto.setName(project.getName());
         projectDto.setDescription(project.getDescription());
+        projectDto.setStartDate(project.getStartDate());
+        projectDto.setEndDate(project.getEndDate());
+        if (project.getIsActive()!=null) {
+            projectDto.setIsActive(project.getIsActive());
+        }else {
+            projectDto.setIsActive(false);
+        }
         return projectDto;
     }
 

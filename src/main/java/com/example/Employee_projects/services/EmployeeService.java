@@ -22,4 +22,6 @@ public interface EmployeeService {
 
     // Delete an employee
     ApiResponse deleteEmployee(String id);
+
+    ApiResponse inActiveEmployee(String employeeId);
 }

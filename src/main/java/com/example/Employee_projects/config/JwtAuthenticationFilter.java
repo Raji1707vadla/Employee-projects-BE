@@ -46,7 +46,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             throws IOException {
         try {
             String authToken = req.getHeader("Authorization");
-            String username = jwtTokenUtil.parseToken(authToken);
+            if (authToken == null || !authToken.startsWith("Bearer ")) {
+                throw new IllegalArgumentException("Authorization header is missing or invalid");
+            }
+            String token = authToken.substring(7);
+            System.out.println(token + "authToken");
+            String username = jwtTokenUtil.parseToken(token);
             Employee employee = employeeRepository.findByPhone(username);
             if (employee != null) {
                 // Create an authentication token without any specific roles

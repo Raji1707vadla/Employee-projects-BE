@@ -21,6 +21,7 @@ public class Employee {
     private double salary;             // Employee's salary
     private String gender; // Employee's gender'
     private String password;
+    private Boolean isActive;
 
 
 }

@@ -54,5 +54,13 @@ public class ProjectController {
         logger.info("delete project service completed");
         return apiResponse;
     }
+
+    @DeleteMapping("/active-or-inactive-project/{projectId}")
+    public ApiResponse inActiveProject(@PathVariable String projectId) {
+        logger.info("Active project service started");
+        ApiResponse apiResponse = projectService.inActiveProject(projectId);
+        logger.info("Active project service completed");
+        return apiResponse;
+    }
 }
 

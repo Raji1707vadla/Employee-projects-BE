@@ -71,4 +71,12 @@ public class EmployeeController {
         logger.info("Delete Employee Service Completed");
         return apiResponse;
     }
+    @DeleteMapping("/active-or-inactive-employee/{employeeId}")
+    public ApiResponse inActiveEmployee(@PathVariable String employeeId) {
+        logger.info("Active Employee Service Started");
+        ApiResponse apiResponse = employeeService.inActiveEmployee(employeeId);
+        logger.info("Active Employee Service Completed");
+        return apiResponse;
+    }
+
 }
