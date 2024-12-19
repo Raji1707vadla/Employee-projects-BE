@@ -16,4 +16,6 @@ public class Project {
     private LocalDate startDate;
     private LocalDate endDate;
     private Boolean isActive;
+    private Employee manager;
+    private Employee lead;
 }

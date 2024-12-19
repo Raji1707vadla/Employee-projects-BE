@@ -2,6 +2,7 @@ package com.example.Employee_projects.services;
 
 import com.example.Employee_projects.ApiResponse.ApiResponse;
 import com.example.Employee_projects.dto.EmployeeDto;
+import com.example.Employee_projects.dto.ResetPassword;
 import com.example.Employee_projects.dto.SignInRequest;
 import com.nimbusds.jose.JOSEException;
 
@@ -24,4 +25,6 @@ public interface EmployeeService {
     ApiResponse deleteEmployee(String id);
 
     ApiResponse inActiveEmployee(String employeeId);
+
+    ApiResponse resetPassword(ResetPassword resetPassword);
 }

@@ -14,7 +14,7 @@ public class EmployeeProjectsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(EmployeeProjectsApplication.class, args);
 		logger.info("***************************************************");
-		logger.info("*             EMPLOYEE-PROJECT SERVER STARTED                   *");
+		logger.info("*       EMPLOYEE-PROJECT SERVER STARTED       *");
 		logger.info("***************************************************");
 	}
 }

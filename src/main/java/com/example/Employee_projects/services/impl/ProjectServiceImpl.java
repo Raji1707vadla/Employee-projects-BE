@@ -1,9 +1,13 @@
 package com.example.Employee_projects.services.impl;
 
 import com.example.Employee_projects.ApiResponse.ApiResponse;
+import com.example.Employee_projects.CommonUtil;
+import com.example.Employee_projects.Document.Employee;
 import com.example.Employee_projects.Document.Project;
+import com.example.Employee_projects.dto.EmployeeDto;
 import com.example.Employee_projects.dto.ProjectDto;
 import com.example.Employee_projects.exception.BadRequestException;
+import com.example.Employee_projects.repository.EmployeeRepository;
 import com.example.Employee_projects.repository.ProjectRepository;
 import com.example.Employee_projects.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +20,8 @@ import java.util.List;
 public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
-
+    @Autowired
+    private EmployeeRepository employeeRepository;
     @Override
     public ApiResponse getAllProjects() {
         List<ProjectDto> projects = projectRepository.findAllByOrderByIsActiveDesc().stream().map(this::entityToProjectDto).toList();
@@ -77,6 +82,17 @@ public class ProjectServiceImpl implements ProjectService {
         if(request.getEndDate()!=null){
             project.setEndDate(request.getEndDate());
         }
+        if(!CommonUtil.isValid(request.getManagerId())){
+            System.out.println("entered manager");
+            Employee manager = employeeRepository.findById(request.getManagerId()).orElseThrow(() -> new BadRequestException("Employee not found"));
+           project.setManager(manager);
+        }
+        if(!CommonUtil.isValid(request.getLeadId())){
+            System.out.println("entered lead");
+            Employee manager = employeeRepository.findById(request.getLeadId()).orElseThrow(() -> new BadRequestException("Employee not found"));
+            project.setLead(manager);
+        }
+        project.setIsActive(true);
         return project;
     }
     public  ProjectDto entityToProjectDto(Project project) {
@@ -91,8 +107,20 @@ public class ProjectServiceImpl implements ProjectService {
         }else {
             projectDto.setIsActive(false);
         }
+        if(project.getLead()!=null){
+            projectDto.setLead(entityToDto(project.getLead()));
+        }
+        if(project.getManager()!=null){
+            projectDto.setManager(entityToDto(project.getManager()));
+        }
         return projectDto;
     }
-
+    public EmployeeDto entityToDto(Employee employee) {
+        EmployeeDto employeeDto = new EmployeeDto();
+        employeeDto.setId(employee.getId());
+        employeeDto.setName(employee.getName());
+        employeeDto.setPhone(employee.getPhone());
+        return employeeDto;
+    }
 }
 

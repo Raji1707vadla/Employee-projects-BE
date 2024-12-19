@@ -4,6 +4,7 @@ import com.example.Employee_projects.CommonUtil;
 import com.example.Employee_projects.Document.Employee;
 import com.example.Employee_projects.config.JwtTokenUtils;
 import com.example.Employee_projects.dto.EmployeeDto;
+import com.example.Employee_projects.dto.ResetPassword;
 import com.example.Employee_projects.dto.SignInRequest;
 import com.example.Employee_projects.dto.SignInResponseDto;
 import com.example.Employee_projects.exception.BadRequestException;
@@ -12,6 +13,8 @@ import com.example.Employee_projects.services.EmployeeService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -99,7 +102,11 @@ public class EmployeeServiceImpl implements EmployeeService {
                     && !employee.getId().equals(request.getId())) {
                 throw new BadRequestException("Mobile number already exists");
             }
-            employee.setPassword( passwordEncoder.encode(employee.getPassword()));
+            if(CommonUtil.isValid(request.getPassword())) {
+                employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+            }else {
+                employee.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
         } else {
             if(CommonUtil.isValid(request.getPassword())) {
                 throw new BadRequestException("Employee Password should not be null");
@@ -127,7 +134,24 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return employee;
     }
-
+    @Override
+    public ApiResponse resetPassword(ResetPassword resetPassword){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Employee employee = (Employee) authentication.getPrincipal();
+        boolean isMatch = passwordEncoder.matches(resetPassword.getOldPassword(), employee.getPassword());
+        System.out.println(employee.getPassword());
+        System.out.println(resetPassword.getOldPassword());
+        boolean isMatchNew = passwordEncoder.matches(resetPassword.getNewPassword(), employee.getPassword());
+        if(!isMatch){
+            throw new BadRequestException("Old Password is incorrect");
+        }
+        if(isMatchNew){
+            throw new BadRequestException("New Password should not be same as old password");
+        }
+        employee.setPassword(passwordEncoder.encode(resetPassword.getNewPassword()));
+        employeeRepository.save(employee);
+        return new ApiResponse(HttpStatus.OK, "Password Reset Successfully");
+    }
 
     public EmployeeDto entityToDto(Employee employee) {
         EmployeeDto employeeDto = new EmployeeDto();

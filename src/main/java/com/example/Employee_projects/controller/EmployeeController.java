@@ -3,6 +3,7 @@ package com.example.Employee_projects.controller;
 import com.example.Employee_projects.ApiResponse.ApiResponse;
 import com.example.Employee_projects.Document.Employee;
 import com.example.Employee_projects.dto.EmployeeDto;
+import com.example.Employee_projects.dto.ResetPassword;
 import com.example.Employee_projects.dto.SignInRequest;
 import com.example.Employee_projects.services.EmployeeService;
 import com.nimbusds.jose.JOSEException;
@@ -76,6 +77,13 @@ public class EmployeeController {
         logger.info("Active Employee Service Started");
         ApiResponse apiResponse = employeeService.inActiveEmployee(employeeId);
         logger.info("Active Employee Service Completed");
+        return apiResponse;
+    }
+    @PostMapping("/reset-password")
+    public ApiResponse resetPassword(@RequestBody ResetPassword resetPassword) {
+        logger.info("Reset Password Of Employee Service Started");
+        ApiResponse apiResponse = employeeService.resetPassword(resetPassword);
+        logger.info("Reset Password Of Employee Service Completed");
         return apiResponse;
     }
 
